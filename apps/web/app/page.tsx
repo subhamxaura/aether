@@ -61,7 +61,7 @@ export default function HomePage() {
             Explore Documentation
           </a>
           <a
-            href="https://github.com/aether-ai/aether"
+            href="https://github.com/subhamxaura/aether"
             style={{
               padding: "0.875rem 1.75rem",
               borderRadius: "0.5rem",

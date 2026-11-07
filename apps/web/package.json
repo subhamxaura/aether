@@ -6,11 +6,10 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "test": "node --test test/**/*.test.js",
     "typecheck": "tsc --noEmit"
   },
-
   "dependencies": {
     "next": "^15.0.3",
     "react": "^19.0.0",

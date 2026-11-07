@@ -18,7 +18,8 @@ mod tests {
         let workflow_id = Uuid::new_v4();
         let initial_state = SagaState::new(saga_id, workflow_id);
 
-        let genesis_hash = "0000000000000000000000000000000000000000000000000000000000000000".to_string();
+        let genesis_hash =
+            "0000000000000000000000000000000000000000000000000000000000000000".to_string();
 
         let e1 = Event::new(
             saga_id,
@@ -77,7 +78,8 @@ mod tests {
 
         let events = vec![e1, e2, e3, e4, e5];
 
-        let state_run1 = SagaState::fold(initial_state.clone(), &events).expect("Fold run 1 failed");
+        let state_run1 =
+            SagaState::fold(initial_state.clone(), &events).expect("Fold run 1 failed");
         let state_run2 = SagaState::fold(initial_state, &events).expect("Fold run 2 failed");
 
         assert_eq!(state_run1, state_run2);
@@ -107,7 +109,13 @@ mod tests {
         );
 
         let result = initial_state.apply(&e_invalid);
-        assert!(matches!(result, Err(AetherError::SequenceMismatch { expected: 1, actual: 2 })));
+        assert!(matches!(
+            result,
+            Err(AetherError::SequenceMismatch {
+                expected: 1,
+                actual: 2
+            })
+        ));
     }
 
     #[test]
@@ -178,8 +186,10 @@ mod tests {
         assert_eq!(s1.status, SagaStatus::Running);
 
         // Replay e1 (duplicate redelivery from NATS JetStream)
-        let s1_duplicate = s1.clone().apply(&e1).expect("Duplicate event should be handled idempotently");
+        let s1_duplicate = s1
+            .clone()
+            .apply(&e1)
+            .expect("Duplicate event should be handled idempotently");
         assert_eq!(s1, s1_duplicate);
     }
 }
-

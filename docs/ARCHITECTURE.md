@@ -1,8 +1,9 @@
 # AETHER Technical Architecture & System Blueprint
+
 **The Distributed Sovereign Agent Operating System & Deterministic Execution Fabric**  
 **Document Class:** Master System Architecture Specification  
 **Version:** 1.0.0  
-**Status:** Canonical Engineering Blueprint  
+**Status:** Canonical Engineering Blueprint
 
 ---
 
@@ -30,6 +31,7 @@ AETHER is architected to address the enterprise requirements of three distinct s
 ```
 
 ### 2.1 Persona 1: Enterprise Platform & Infrastructure Engineers
+
 - **Profile & Environment:** Platform engineering teams in highly regulated sectors (financial services, healthcare, defense, telecommunications) deploying across sovereign clouds, on-prem air-gapped Kubernetes clusters, and private VPC enclaves.
 - **Primary Operational Needs:**
   - An infrastructure-grade runtime capable of operating in air-gapped environments without mandatory public cloud egress.
@@ -41,6 +43,7 @@ AETHER is architected to address the enterprise requirements of three distinct s
 - **AETHER Value Proposition:** Compiled Rust core daemon (`aetherd`) with embedded Raft consensus, declarative Cedar authorization policies, and hardware-isolated Firecracker microVMs.
 
 ### 2.2 Persona 2: Autonomous AI Application Developers & AI Engineers
+
 - **Profile & Environment:** Product engineering teams and AI startups constructing multi-agent, multi-step autonomous workflows (e.g., automated code synthesis, financial intelligence analysis, continuous vulnerability remediation).
 - **Primary Operational Needs:**
   - Resilient, durable execution semantics where a 25-step agent saga does not fail at step 24 due to upstream LLM rate-limiting, transient network disconnects, or container eviction.
@@ -51,6 +54,7 @@ AETHER is architected to address the enterprise requirements of three distinct s
 - **AETHER Value Proposition:** Event-sourced saga orchestration ($S_t = \text{fold}(S_0, [E_1 \dots E_t])$) with automatic checkpointing, idempotency keys, and sub-millisecond Wasm sandbox invocation.
 
 ### 2.3 Persona 3: SREs, SecOps & AI Safety Officers
+
 - **Profile & Environment:** Site reliability engineering and security operations teams responsible for running multi-agent swarms at scale while managing seven-figure cloud API budgets.
 - **Primary Operational Needs:**
   - Granular cost and token accounting with hard, real-time circuit breakers and tenant-level budget caps.
@@ -120,6 +124,7 @@ Aether is architected into four decoupled planes designed for horizontal elastic
 ---
 
 ### 3.1 Plane 1: Ingress & Policy Gateway
+
 - **Zero-Trust Identity**: Terminates public TLS 1.3, authenticates user JWTs via OIDC providers, and verifies worker microVM identities via SPIFFE/SPIRE x509 SVIDs.
 - **PII & Prompt Shielding**: Zero-copy regex and Rust string inspection scrubs API keys, SSNs, and credit cards before persisting prompts. An adversarial classifier blocks direct prompt-injection vectors.
 - **Distributed Multi-Dimensional Rate Limiting**: Evaluated in Redis/Dragonfly using atomic Lua token-bucket algorithms across requests-per-minute (RPM) and tokens-per-minute (TPM).
@@ -128,6 +133,7 @@ Aether is architected into four decoupled planes designed for horizontal elastic
 ---
 
 ### 3.2 Plane 2: Control Plane Rust Kernel (`aetherd`)
+
 - **Event-Sourced Saga Orchestrator**: Manages execution state as an append-only event stream. Eliminates destructive in-place state updates.
 - **Distributed Raft Consensus (`aether-raft`)**: High-availability multi-node cluster leader election and linearizable state log replication across engine instances.
 - **Task & Swarm Scheduler**: Work-stealing priority scheduler that matches tasks to worker nodes based on capability tags, GPU availability, and network locality.
@@ -136,6 +142,7 @@ Aether is architected into four decoupled planes designed for horizontal elastic
 ---
 
 ### 3.3 Plane 3: Worker Plane (Zero-Trust Sandboxes)
+
 - **Tier A: WebAssembly (`Wasmtime`) Sandboxing**: Microsecond instantiation (<5ms) for deterministic, stateless data transformations, math execution, and JSON parsing. Provides hardware-enforced memory isolation up to 64MB per sandbox.
 - **Tier B: MicroVM (`Firecracker`) Sandboxing**: Minimal virtual machines booting in <100ms with isolated Linux kernels for untrusted Python, Bash, and browser scripts.
 - **eBPF Security Guardrail**: Linux eBPF probes inspect all syscalls and network egress packets, restricting socket traffic strictly to domain whitelists.
@@ -172,6 +179,7 @@ Aether is architected into four decoupled planes designed for horizontal elastic
 ## 4. Mathematical State Machine & Event-Sourcing Algebra
 
 ### 4.1 Deterministic State Fold
+
 The execution state $S_t$ of any agent workflow at discrete event step $t$ is computed deterministically by folding the immutable event sequence over the initial state schema $S_0$:
 
 $$S_t = \text{fold}(S_0, [E_1, E_2, \dots, E_t])$$
@@ -180,6 +188,7 @@ Where each event $E_i$ is an immutable tuple:
 $$E_i = \langle \text{event\_id}, \text{saga\_id}, \text{seq}, \text{type}, \text{payload}, \text{timestamp}, \text{signature} \rangle$$
 
 ### 4.2 Invariants & Properties
+
 1. **Purity**: Given identical initial state $S_0$ and event stream $[E_1 \dots E_t]$, the resulting state $S_t$ is byte-identical:
    $$\forall A, B : (S_0^A = S_0^B \land E_{1..t}^A = E_{1..t}^B) \implies S_t^A = S_t^B$$
 2. **Snapshot Acceleration**: Checkpoints save compressed state vectors at step $K$. Resumption at step $t > K$ requires folding only remaining events:
@@ -263,18 +272,18 @@ stateDiagram-v2
     Initialized --> Planning: Context Hydrated
     Planning --> Inference: Prompt Dispatched
     Inference --> PolicyEvaluation: Proposed Action Generated
-    
+
     state PolicyEvaluation <<choice>>
     PolicyEvaluation --> SandboxedExecution: Risk Score < Threshold (Low Risk)
     PolicyEvaluation --> Suspended_Awaiting_Approval: Risk Score >= Threshold (High Risk)
-    
+
     Suspended_Awaiting_Approval --> HumanReview: Signal Webhook / Console Alert
     HumanReview --> Rejected: Reviewer Rejects
     HumanReview --> Approved: Cryptographically Signed Approval
-    
+
     Rejected --> Planning: Rollback & Re-plan
     Approved --> SandboxedExecution: Execute in Sandbox
-    
+
     SandboxedExecution --> StateCommitted: Append to Event WAL
     StateCommitted --> Planning: Further Steps Required
     StateCommitted --> Completed: Terminal State Reached

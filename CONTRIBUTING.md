@@ -7,6 +7,7 @@ This document outlines our development standards, repository layout, review proc
 ---
 
 ## Table of Contents
+
 1. [The 5-Minute Developer Quickstart](#1-the-5-minute-developer-quickstart)
 2. [Monorepo Architecture](#2-monorepo-architecture)
 3. [Development Workflow & Branching](#3-development-workflow--branching)
@@ -36,6 +37,7 @@ pnpm dev
 ```
 
 ### Prerequisites
+
 - **Node.js**: `v20.0.0` or higher
 - **pnpm**: `v9.0.0` or higher
 - **Rust**: `1.82.0` (Edition 2024) or higher
@@ -88,6 +90,7 @@ We strictly adhere to the [Conventional Commits](https://www.conventionalcommits
 Format: `<type>(<scope>): <subject>`
 
 ### Allowed Types:
+
 - `feat`: A new user-facing feature or API capability.
 - `fix`: A bug fix in existing behavior.
 - `perf`: A code change that improves execution performance or reduces memory/latency.
@@ -98,9 +101,11 @@ Format: `<type>(<scope>): <subject>`
 - `chore`: Maintenance tasks, build system updates, or dependency bumps.
 
 ### Scopes:
+
 - `core`, `raft`, `wasm`, `sdk-ts`, `sdk-py`, `api`, `console`, `docs`, `deps`
 
 ### Examples:
+
 ```bash
 git commit -m "feat(core): implement event-sourced saga state fold"
 git commit -m "fix(wasm): enforce 64MB memory limit in sandbox instance"
@@ -114,6 +119,7 @@ git commit -m "docs(api): document idempotency-key header requirements"
 All pull requests are validated via automated CI pipelines. You can run checks locally before committing:
 
 ### Rust Crates:
+
 ```bash
 # Format check
 cargo fmt --all -- --check
@@ -123,6 +129,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 ```
 
 ### TypeScript & Apps:
+
 ```bash
 # Linting across all workspace packages
 pnpm lint
@@ -135,6 +142,7 @@ pnpm format:check
 ```
 
 ### Python SDK:
+
 ```bash
 # Linting & formatting
 ruff check packages/sdk-python
@@ -184,10 +192,13 @@ When your changes are ready:
 Aether follows an open, meritocratic technical steering model:
 
 ### Technical Steering Committee (TSC)
+
 The TSC oversees major architectural evolutions, core API standards, and release engineering.
 
 ### Request for Comments (RFC) Process
+
 Significant architectural proposals—such as changes to event schemas, wire protocols, or security sandbox boundaries—must begin with an RFC:
+
 1. Open an RFC issue using `.github/ISSUE_TEMPLATE/feature_request.yml`.
 2. Draft an RFC specification in markdown detailing motivation, proposed API design, trade-offs, and migration paths.
 3. The RFC is subject to a 14-day community review and discussion period prior to TSC voting.

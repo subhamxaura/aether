@@ -42,9 +42,7 @@ enum Commands {
         step: Option<u64>,
     },
     /// Export execution audit trail to JSON
-    Export {
-        run_id: Uuid,
-    },
+    Export { run_id: Uuid },
     /// Run the Aether Control Plane Daemon
     Daemon {
         #[arg(short, long, default_value_t = 8080)]
@@ -55,7 +53,8 @@ enum Commands {
 }
 
 fn generate_canonical_events(run_id: Uuid) -> Vec<Event> {
-    let genesis_hash = "0000000000000000000000000000000000000000000000000000000000000000".to_string();
+    let genesis_hash =
+        "0000000000000000000000000000000000000000000000000000000000000000".to_string();
 
     let e1 = Event::new(
         run_id,
@@ -132,20 +131,35 @@ async fn main() -> Result<()> {
 
     match cli.command {
         Commands::Init { name, template } => {
-            info!("Initializing new Aether agent swarm '{}' with template '{}'...", name, template);
+            info!(
+                "Initializing new Aether agent swarm '{}' with template '{}'...",
+                name, template
+            );
             println!("Created Aether project '{}' successfully.", name);
         }
         Commands::Dev { port } => {
             info!("Starting Aether development cluster on port {}...", port);
             println!("Aether dev cluster listening on http://localhost:{}", port);
         }
-        Commands::Run { path, idempotency_key } => {
+        Commands::Run {
+            path,
+            idempotency_key,
+        } => {
             let key = idempotency_key.unwrap_or_else(|| Uuid::new_v4().to_string());
-            info!("Executing workflow '{}' with idempotency key '{}'...", path, key);
-            println!("Workflow submitted successfully. Run ID: {}", Uuid::new_v4());
+            info!(
+                "Executing workflow '{}' with idempotency key '{}'...",
+                path, key
+            );
+            println!(
+                "Workflow submitted successfully. Run ID: {}",
+                Uuid::new_v4()
+            );
         }
         Commands::Replay { run_id, step } => {
-            info!("Replaying execution run {} up to step {:?}...", run_id, step);
+            info!(
+                "Replaying execution run {} up to step {:?}...",
+                run_id, step
+            );
             let file_path = format!("{}.json", run_id);
             let mut events = if std::path::Path::new(&file_path).exists() {
                 let content = std::fs::read_to_string(&file_path)?;
@@ -155,7 +169,9 @@ async fn main() -> Result<()> {
                 }
 
                 serde_json::from_str::<Vec<Event>>(&content)
-                    .or_else(|_| serde_json::from_str::<ExportEnvelope>(&content).map(|env| env.events))
+                    .or_else(|_| {
+                        serde_json::from_str::<ExportEnvelope>(&content).map(|env| env.events)
+                    })
                     .unwrap_or_else(|_| generate_canonical_events(run_id))
             } else {
                 generate_canonical_events(run_id)
@@ -174,8 +190,14 @@ async fn main() -> Result<()> {
             println!("  Events Replayed:      {}", events.len());
             println!("  Final Status:         {:?}", final_state.status);
             println!("  Sequence Index:       {}", final_state.last_seq);
-            println!("  Total Prompt Tokens:  {}", final_state.total_prompt_tokens);
-            println!("  Total Compl. Tokens:  {}", final_state.total_completion_tokens);
+            println!(
+                "  Total Prompt Tokens:  {}",
+                final_state.total_prompt_tokens
+            );
+            println!(
+                "  Total Compl. Tokens:  {}",
+                final_state.total_completion_tokens
+            );
             if let Some(res) = &final_state.final_result {
                 println!("  Final Output:         {}", serde_json::to_string(res)?);
             }
@@ -197,21 +219,30 @@ async fn main() -> Result<()> {
 
             let out_file = format!("{}.json", run_id);
             std::fs::write(&out_file, serde_json::to_string_pretty(&export_payload)?)?;
-            println!("Audit trail successfully exported to {} ({} events).", out_file, events.len());
+            println!(
+                "Audit trail successfully exported to {} ({} events).",
+                out_file,
+                events.len()
+            );
         }
         Commands::Daemon { port, grpc_port } => {
             let rest_addr = format!("0.0.0.0:{}", port);
             let grpc_addr = format!("0.0.0.0:{}", grpc_port);
 
-            let rest_listener = tokio::net::TcpListener::bind(&rest_addr).await
+            let rest_listener = tokio::net::TcpListener::bind(&rest_addr)
+                .await
                 .context(format!("Failed to bind REST listener on {}", rest_addr))?;
             info!("REST & SSE Gateway listening on http://{}", rest_addr);
 
-            let grpc_listener = tokio::net::TcpListener::bind(&grpc_addr).await
+            let grpc_listener = tokio::net::TcpListener::bind(&grpc_addr)
+                .await
                 .context(format!("Failed to bind gRPC listener on {}", grpc_addr))?;
             info!("gRPC Worker Service listening on {}", grpc_addr);
 
-            println!("aetherd kernel running on {} (REST) and {} (gRPC).", rest_addr, grpc_addr);
+            println!(
+                "aetherd kernel running on {} (REST) and {} (gRPC).",
+                rest_addr, grpc_addr
+            );
             println!("Press Ctrl+C to stop.");
 
             let rest_task = tokio::spawn(async move {
@@ -221,7 +252,9 @@ async fn main() -> Result<()> {
                             tokio::spawn(async move {
                                 use tokio::io::{AsyncReadExt, AsyncWriteExt};
                                 let mut buf = [0u8; 1024];
-                                if let Ok(n) = socket.read(&mut buf).await && n > 0 {
+                                if let Ok(n) = socket.read(&mut buf).await
+                                    && n > 0
+                                {
                                     let response = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 15\r\n\r\n{\"status\":\"ok\"}";
                                     let _ = socket.write_all(response.as_bytes()).await;
                                 }

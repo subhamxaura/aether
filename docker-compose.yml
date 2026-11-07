@@ -52,7 +52,14 @@ services:
     image: redis:7.4-alpine
     container_name: aether-redis
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "aether_dev_redis"]
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--requirepass",
+        "aether_dev_redis",
+      ]
     ports:
       - "6379:6379"
     volumes:
@@ -82,7 +89,11 @@ services:
     volumes:
       - minio_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:9000/minio/health/live || exit 1",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -151,4 +162,3 @@ volumes:
   minio_data:
   cargo_target:
   cargo_cache:
-

@@ -11,13 +11,16 @@ export class AetherClient {
   private apiKey?: string;
 
   constructor(options: AetherClientOptions = {}) {
-    this.endpoint = (options.endpoint ?? "http://localhost:8080").replace(/\/+$/, "");
+    this.endpoint = (options.endpoint ?? "http://localhost:8080").replace(
+      /\/+$/,
+      "",
+    );
     this.apiKey = options.apiKey;
   }
 
   public async triggerWorkflow(
     workflow: WorkflowBuilder,
-    options: { inputs: Record<string, unknown>; idempotencyKey?: string }
+    options: { inputs: Record<string, unknown>; idempotencyKey?: string },
   ): Promise<RunSummary> {
     const payload = {
       workflowName: workflow.config.name,
@@ -42,7 +45,9 @@ export class AetherClient {
 
     if (!res.ok) {
       const errorDetail = await res.text().catch(() => res.statusText);
-      throw new Error(`Failed to trigger workflow '${workflow.config.name}' (${res.status}): ${errorDetail}`);
+      throw new Error(
+        `Failed to trigger workflow '${workflow.config.name}' (${res.status}): ${errorDetail}`,
+      );
     }
 
     return (await res.json()) as RunSummary;
@@ -50,7 +55,7 @@ export class AetherClient {
 
   public async *streamRunEvents(
     runId: string,
-    options?: { lastEventId?: string }
+    options?: { lastEventId?: string },
   ): AsyncGenerator<RunEvent> {
     const headers: Record<string, string> = {
       Accept: "text/event-stream",
@@ -70,7 +75,9 @@ export class AetherClient {
 
     if (!response.ok) {
       const errorMsg = await response.text().catch(() => response.statusText);
-      throw new Error(`Failed to open event stream for run '${runId}' (${response.status}): ${errorMsg}`);
+      throw new Error(
+        `Failed to open event stream for run '${runId}' (${response.status}): ${errorMsg}`,
+      );
     }
 
     if (!response.body) {
@@ -115,7 +122,10 @@ export class AetherClient {
               parsedData = { raw: dataStr };
             }
 
-            const token = typeof parsedData.token === "string" ? parsedData.token : undefined;
+            const token =
+              typeof parsedData.token === "string"
+                ? parsedData.token
+                : undefined;
 
             yield {
               id: eventId || crypto.randomUUID(),

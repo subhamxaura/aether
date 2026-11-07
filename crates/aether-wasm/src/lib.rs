@@ -9,7 +9,9 @@ pub enum WasmSandboxError {
     #[error("Execution fuel exhausted (CPU limit reached)")]
     FuelExhausted,
 
-    #[error("Memory limit breached: allocated {allocated_bytes} bytes exceeds max {max_bytes} bytes")]
+    #[error(
+        "Memory limit breached: allocated {allocated_bytes} bytes exceeds max {max_bytes} bytes"
+    )]
     MemoryExceeded {
         allocated_bytes: usize,
         max_bytes: usize,

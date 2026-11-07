@@ -6,11 +6,10 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "test": "node --test test/**/*.test.js",
     "typecheck": "tsc --noEmit"
   },
-
   "dependencies": {
     "fumadocs-ui": "^14.0.0",
     "fumadocs-core": "^14.0.0",

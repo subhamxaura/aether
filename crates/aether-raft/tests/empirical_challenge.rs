@@ -99,8 +99,14 @@ async fn test_raft_no_corruption_on_error_after_valid_event() {
     assert!(gap_res.is_err(), "Gap event must fail");
 
     // Verify existing state in RaftStateMachine was NOT corrupted or overwritten
-    let current = sm.get_state(&saga_id).await.expect("State should still exist");
-    assert_eq!(current, s1, "Failed transition must leave previous valid state unmodified");
+    let current = sm
+        .get_state(&saga_id)
+        .await
+        .expect("State should still exist");
+    assert_eq!(
+        current, s1,
+        "Failed transition must leave previous valid state unmodified"
+    );
 
     // Invalid event with seq=0
     let invalid_zero = make_event(
@@ -116,8 +122,14 @@ async fn test_raft_no_corruption_on_error_after_valid_event() {
     let zero_res = sm.apply_event(&invalid_zero).await;
     assert!(zero_res.is_err(), "Zero seq event must fail");
 
-    let current_after_zero = sm.get_state(&saga_id).await.expect("State should still exist");
-    assert_eq!(current_after_zero, s1, "Zero seq failure must leave previous state unmodified");
+    let current_after_zero = sm
+        .get_state(&saga_id)
+        .await
+        .expect("State should still exist");
+    assert_eq!(
+        current_after_zero, s1,
+        "Zero seq failure must leave previous state unmodified"
+    );
 }
 
 #[tokio::test]
@@ -150,11 +162,17 @@ async fn test_raft_duplicate_redelivery_on_completed_saga() {
     assert_eq!(completed_state.last_seq, 2);
 
     // Redeliver e1 via Raft
-    let dup1_res = sm.apply_event(&e1).await.expect("e1 duplicate must succeed");
+    let dup1_res = sm
+        .apply_event(&e1)
+        .await
+        .expect("e1 duplicate must succeed");
     assert_eq!(dup1_res, completed_state);
 
     // Redeliver e2 via Raft
-    let dup2_res = sm.apply_event(&e2).await.expect("e2 duplicate must succeed");
+    let dup2_res = sm
+        .apply_event(&e2)
+        .await
+        .expect("e2 duplicate must succeed");
     assert_eq!(dup2_res, completed_state);
 
     // Verify state in map remains completed
@@ -173,8 +191,14 @@ async fn test_raft_duplicate_redelivery_on_completed_saga() {
         },
     );
     let post_res = sm.apply_event(&post_complete_event).await;
-    assert!(post_res.is_err(), "New events on Completed saga must be rejected");
-    assert!(matches!(post_res, Err(AetherError::InvalidTransition { .. })));
+    assert!(
+        post_res.is_err(),
+        "New events on Completed saga must be rejected"
+    );
+    assert!(matches!(
+        post_res,
+        Err(AetherError::InvalidTransition { .. })
+    ));
 
     // State in SM still intact
     assert_eq!(sm.get_state(&saga_id).await.unwrap(), completed_state);

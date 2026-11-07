@@ -43,5 +43,11 @@ fn main() {
     let start = Instant::now();
     let res = SagaState::fold(initial_state, &events).expect("Fold succeeded");
     let dur = start.elapsed();
-    println!("Processed {} events in {:.4}s ({:.2} events/sec), final seq {}", count, dur.as_secs_f64(), (count as f64) / dur.as_secs_f64(), res.last_seq);
+    println!(
+        "Processed {} events in {:.4}s ({:.2} events/sec), final seq {}",
+        count,
+        dur.as_secs_f64(),
+        (count as f64) / dur.as_secs_f64(),
+        res.last_seq
+    );
 }

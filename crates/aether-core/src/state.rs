@@ -82,7 +82,6 @@ impl SagaState {
 
         self.last_seq = event.seq;
 
-
         match &event.payload {
             EventPayload::AgentJobCreated { workflow_id, .. } => {
                 self.workflow_id = *workflow_id;
@@ -127,7 +126,9 @@ impl SagaState {
 
     /// Deterministic fold over an entire event sequence
     pub fn fold(initial: Self, events: &[Event]) -> Result<Self, AetherError> {
-        events.iter().try_fold(initial, |state, event| state.apply(event))
+        events
+            .iter()
+            .try_fold(initial, |state, event| state.apply(event))
     }
 
     /// Deterministic fold over any iterator yielding event references
@@ -135,7 +136,9 @@ impl SagaState {
     where
         I: IntoIterator<Item = &'a Event>,
     {
-        events.into_iter().try_fold(initial, |state, event| state.apply(event))
+        events
+            .into_iter()
+            .try_fold(initial, |state, event| state.apply(event))
     }
 
     /// Deterministic SHA-256 state hash for verification and snapshot comparison
@@ -173,7 +176,10 @@ mod tests {
         );
 
         let res = state.clone().apply(&duplicate_event);
-        assert!(res.is_ok(), "Duplicate redelivery on Completed saga should return Ok");
+        assert!(
+            res.is_ok(),
+            "Duplicate redelivery on Completed saga should return Ok"
+        );
         assert_eq!(res.unwrap(), state);
     }
 
@@ -196,7 +202,10 @@ mod tests {
         );
 
         let res = state.clone().apply(&duplicate_event);
-        assert!(res.is_ok(), "Duplicate redelivery on Aborted saga should return Ok");
+        assert!(
+            res.is_ok(),
+            "Duplicate redelivery on Aborted saga should return Ok"
+        );
         assert_eq!(res.unwrap(), state);
     }
 
@@ -227,4 +236,3 @@ mod tests {
         }
     }
 }
-

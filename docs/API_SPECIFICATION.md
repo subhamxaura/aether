@@ -1,7 +1,8 @@
 # AETHER Protocol & API Specifications
+
 **Document Class:** Technical Interface & Wire Protocol Specification  
 **Version:** 1.0.0  
-**Compatibility:** OpenAPI 3.1.0 / Protobuf v3 / HTTP/2 gRPC / SSE / WebSockets  
+**Compatibility:** OpenAPI 3.1.0 / Protobuf v3 / HTTP/2 gRPC / SSE / WebSockets
 
 ---
 
@@ -9,12 +10,12 @@
 
 Aether decouples control, execution, and client observation through three specialized transport protocols:
 
-| Transport Layer | Primary Usage | Latency SLA | Security / Auth |
-| :--- | :--- | :--- | :--- |
-| **REST (OpenAPI 3.1)** | Client management, workflow CRUD, runs trigger, HITL gates | < 50ms | OIDC Bearer JWT / API Key |
-| **gRPC (HTTP/2)** | Engine-to-worker dispatch, tool execution, checkpoint sync | < 2ms | SPIFFE/SPIRE mTLS |
-| **SSE (EventStream)** | One-way telemetry streaming, live token generation, UI traces | < 10ms | Bearer Token / URL ticket |
-| **WebSocket** | Interactive duplex steering, terminal forwarding, manual step override | < 10ms | Session handshake token |
+| Transport Layer        | Primary Usage                                                          | Latency SLA | Security / Auth           |
+| :--------------------- | :--------------------------------------------------------------------- | :---------- | :------------------------ |
+| **REST (OpenAPI 3.1)** | Client management, workflow CRUD, runs trigger, HITL gates             | < 50ms      | OIDC Bearer JWT / API Key |
+| **gRPC (HTTP/2)**      | Engine-to-worker dispatch, tool execution, checkpoint sync             | < 2ms       | SPIFFE/SPIRE mTLS         |
+| **SSE (EventStream)**  | One-way telemetry streaming, live token generation, UI traces          | < 10ms      | Bearer Token / URL ticket |
+| **WebSocket**          | Interactive duplex steering, terminal forwarding, manual step override | < 10ms      | Session handshake token   |
 
 ---
 
@@ -55,7 +56,7 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Array of workflow definitions
           content:
             application/json:
@@ -65,7 +66,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/WorkflowResponse'
+                      $ref: "#/components/schemas/WorkflowResponse"
                   total:
                     type: integer
 
@@ -77,16 +78,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkflowCreateRequest'
+              $ref: "#/components/schemas/WorkflowCreateRequest"
       responses:
-        '201':
+        "201":
           description: Workflow registered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkflowResponse'
-        '400':
-          $ref: '#/components/responses/ValidationError'
+                $ref: "#/components/schemas/WorkflowResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
 
   /workflows/{workflow_id}/runs:
     post:
@@ -111,9 +112,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RunTriggerRequest'
+              $ref: "#/components/schemas/RunTriggerRequest"
       responses:
-        '202':
+        "202":
           description: Workflow run accepted and queued in NATS JetStream
           headers:
             X-RateLimit-Limit:
@@ -125,9 +126,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkflowRunSummary'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
+                $ref: "#/components/schemas/WorkflowRunSummary"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
 
   /runs/{run_id}:
     get:
@@ -141,13 +142,13 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkflowRunDetail'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+                $ref: "#/components/schemas/WorkflowRunDetail"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
 
   /runs/{run_id}/resume:
     post:
@@ -165,9 +166,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResumeRunRequest'
+              $ref: "#/components/schemas/ResumeRunRequest"
       responses:
-        '200':
+        "200":
           description: Run resumed and scheduled for continuation
           content:
             application/json:
@@ -189,7 +190,7 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Run cancelled
 
 components:
@@ -209,7 +210,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: "#/components/schemas/ErrorResponse"
     RateLimitError:
       description: Token bucket limit exceeded
       headers:
@@ -218,13 +219,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: "#/components/schemas/ErrorResponse"
     NotFoundError:
       description: Requested resource was not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
     WorkflowCreateRequest:
@@ -246,18 +247,22 @@ components:
             nodes:
               type: array
               items:
-                $ref: '#/components/schemas/DAGNode'
+                $ref: "#/components/schemas/DAGNode"
             edges:
               type: array
               items:
-                $ref: '#/components/schemas/DAGEdge'
+                $ref: "#/components/schemas/DAGEdge"
 
     DAGNode:
       type: object
       required: [id, agent_role]
       properties:
         id: { type: string, example: "code_analyzer" }
-        agent_role: { type: string, enum: [SUPERVISOR, WORKER, CRITIC, SPECIALIST, AUDITOR] }
+        agent_role:
+          {
+            type: string,
+            enum: [SUPERVISOR, WORKER, CRITIC, SPECIALIST, AUDITOR],
+          }
         model_override: { type: string, example: "claude-3-5-sonnet" }
         max_retries: { type: integer, default: 3 }
 
@@ -267,7 +272,8 @@ components:
       properties:
         from_node: { type: string }
         to_node: { type: string }
-        condition: { type: string, example: "output.vulnerabilities.length > 0" }
+        condition:
+          { type: string, example: "output.vulnerabilities.length > 0" }
 
     WorkflowResponse:
       type: object
@@ -298,7 +304,16 @@ components:
         workflow_id: { type: string, format: uuid }
         status:
           type: string
-          enum: [PENDING, RUNNING, WAITING_INPUT, SUSPENDED, COMPLETED, FAILED, CANCELLED]
+          enum:
+            [
+              PENDING,
+              RUNNING,
+              WAITING_INPUT,
+              SUSPENDED,
+              COMPLETED,
+              FAILED,
+              CANCELLED,
+            ]
         created_at: { type: string, format: date-time }
 
     WorkflowRunDetail:
@@ -334,7 +349,11 @@ components:
       required: [code, message]
       properties:
         code: { type: string, example: "RATE_LIMIT_EXCEEDED" }
-        message: { type: string, example: "Token quota breached for organization tier." }
+        message:
+          {
+            type: string,
+            example: "Token quota breached for organization tier.",
+          }
         details: { type: object }
 ```
 
@@ -358,13 +377,13 @@ import "google/protobuf/struct.proto";
 service OrchestrationEngineService {
   // Dispatches an atomic execution task to a sandboxed worker
   rpc DispatchTask(TaskDispatchRequest) returns (TaskDispatchResponse);
-  
+
   // Worker reports completion or failure of a step
   rpc ReportTaskCompletion(TaskCompletionRequest) returns (TaskCompletionResponse);
-  
+
   // Real-time bidirectional event streaming between worker and engine
   rpc StreamExecutionEvents(stream ExecutionEvent) returns (stream ControlSignal);
-  
+
   // Heartbeat keepalive ensuring worker liveness
   rpc Heartbeat(WorkerHeartbeatRequest) returns (WorkerHeartbeatResponse);
 }
@@ -376,13 +395,13 @@ service AgentRuntimeService {
 
   // Executes an isolated reasoning step with streaming tokens
   rpc ExecuteStep(StepExecutionRequest) returns (stream StepStreamResponse);
-  
+
   // Invocates an isolated tool inside WebAssembly / MicroVM
   rpc ExecuteToolCall(ToolCallRequest) returns (ToolCallResponse);
-  
+
   // Queries the Tri-Tier memory fabric
   rpc QueryMemory(MemoryQueryRequest) returns (MemoryQueryResponse);
-  
+
   // Persists deterministic execution state checkpoint
   rpc SaveCheckpoint(CheckpointRequest) returns (CheckpointResponse);
 
@@ -573,6 +592,7 @@ message CheckpointResponse {
 ## 4. Real-Time Streaming Protocols
 
 ### 4.1 Server-Sent Events (SSE) Contract
+
 - **Endpoint**: `GET /api/v1/runs/{run_id}/stream`
 - **Headers**:
   ```http
@@ -612,6 +632,7 @@ data: {"reason": "HUMAN_APPROVAL_REQUIRED", "action": "promote_production_binary
 ---
 
 ### 4.2 Bidirectional WebSocket Steering Contract
+
 - **Endpoint**: `GET /ws/v1/runs/{run_id}/control`
 - **Subprotocol**: `aether-duplex-v1`
 - **Client Frame (Human-in-the-Loop Override)**:

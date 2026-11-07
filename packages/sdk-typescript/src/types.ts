@@ -24,7 +24,12 @@ export interface RunSummary {
 
 export interface RunEvent {
   id: string;
-  type: "node.started" | "agent.token" | "tool.invoked" | "checkpoint.saved" | "run.suspended";
+  type:
+    | "node.started"
+    | "agent.token"
+    | "tool.invoked"
+    | "checkpoint.saved"
+    | "run.suspended";
   data: Record<string, unknown>;
   token?: string;
 }

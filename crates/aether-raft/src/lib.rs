@@ -94,7 +94,10 @@ mod tests {
         );
 
         let result = sm.apply_event(&invalid_event).await;
-        assert!(result.is_err(), "Expected apply_event to fail on sequence mismatch");
+        assert!(
+            result.is_err(),
+            "Expected apply_event to fail on sequence mismatch"
+        );
         assert!(
             sm.get_state(&saga_id).await.is_none(),
             "Phantom saga state must not be retained in sagas map on failure"

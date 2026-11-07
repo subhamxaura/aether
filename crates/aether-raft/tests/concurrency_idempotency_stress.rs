@@ -1,8 +1,8 @@
 use aether_core::{Event, EventPayload, SagaState, SagaStatus};
 use aether_raft::RaftStateMachine;
 use serde_json::json;
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Instant;
 use tokio::sync::Barrier;
 use uuid::Uuid;
@@ -25,7 +25,10 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
     println!("  Unique Progression Events: {}", total_unique_events);
     println!("  Duplicate Events Injected: {}", total_duplicates);
     println!("  Total Events Processed:    {}", total_events);
-    println!("  Duplicate Event Ratio:     {:.2}% (Requirement >= 50%)", dup_ratio);
+    println!(
+        "  Duplicate Event Ratio:     {:.2}% (Requirement >= 50%)",
+        dup_ratio
+    );
     assert!(dup_ratio >= 50.0);
     assert!(total_events >= 50_000);
     assert!(num_tasks >= 50);
@@ -35,7 +38,10 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
     let initial_state = SagaState::new(saga_id, workflow_id);
 
     // Pre-generate canonical event sequence
-    println!("  [1/4] Pre-generating {} canonical Raft events...", total_unique_events);
+    println!(
+        "  [1/4] Pre-generating {} canonical Raft events...",
+        total_unique_events
+    );
     let mut canonical_events = Vec::with_capacity(total_unique_events);
 
     let e1 = Event::new(
@@ -90,8 +96,8 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
 
     // Baseline single-threaded state calculation
     println!("  [2/4] Computing baseline sequential Raft state...");
-    let baseline_state = SagaState::fold(initial_state, &canonical_events)
-        .expect("Baseline sequential fold failed");
+    let baseline_state =
+        SagaState::fold(initial_state, &canonical_events).expect("Baseline sequential fold failed");
     let baseline_hash = baseline_state.state_hash();
     println!("      Baseline State Hash: {}", baseline_hash);
 
@@ -104,7 +110,10 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
     let duplicate_success_counter = Arc::new(AtomicU64::new(0));
     let progress_success_counter = Arc::new(AtomicU64::new(0));
 
-    println!("  [3/4] Launching {} concurrent tasks against RaftStateMachine...", num_tasks);
+    println!(
+        "  [3/4] Launching {} concurrent tasks against RaftStateMachine...",
+        num_tasks
+    );
     let mut handles = Vec::with_capacity(num_tasks);
 
     // Task 0: Stream progression driver
@@ -118,7 +127,10 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
         handles.push(tokio::spawn(async move {
             barrier_clone.wait().await;
             for event in events_clone.iter() {
-                let state = sm_clone.apply_event(event).await.expect("Progression event must succeed");
+                let state = sm_clone
+                    .apply_event(event)
+                    .await
+                    .expect("Progression event must succeed");
                 assert_eq!(state.last_seq, event.seq);
                 processed.fetch_add(1, Ordering::Relaxed);
                 prog_counter.fetch_add(1, Ordering::Relaxed);
@@ -141,7 +153,9 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
 
         handles.push(tokio::spawn(async move {
             barrier_clone.wait().await;
-            let mut lcg: u64 = (worker_id as u64).wrapping_mul(0x5851F42D4C957F2D).wrapping_add(1);
+            let mut lcg: u64 = (worker_id as u64)
+                .wrapping_mul(0x5851F42D4C957F2D)
+                .wrapping_add(1);
 
             for _ in 0..duplicates_per_worker {
                 // Read current committed sequence safely via RaftStateMachine
@@ -156,8 +170,9 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
                     let target_seq = (lcg % max_avail) + 1;
                     let dup_event = &events_clone[(target_seq - 1) as usize];
 
-                    let state = sm_clone.apply_event(dup_event).await
-                        .expect("Duplicate event application must succeed idempotently in RaftStateMachine");
+                    let state = sm_clone.apply_event(dup_event).await.expect(
+                        "Duplicate event application must succeed idempotently in RaftStateMachine",
+                    );
 
                     assert!(
                         state.last_seq >= dup_event.seq,
@@ -184,24 +199,45 @@ async fn test_raft_concurrency_and_duplicate_idempotency_stress() {
     let throughput = (final_processed as f64) / elapsed.as_secs_f64();
 
     println!("  [4/4] Verifying Raft determinism and zero race conditions...");
-    let final_state = sm.get_state(&saga_id).await.expect("Final state must exist in Raft state machine");
+    let final_state = sm
+        .get_state(&saga_id)
+        .await
+        .expect("Final state must exist in Raft state machine");
     let final_hash = final_state.state_hash();
 
-    println!("      Raft Final State Status:       {:?}", final_state.status);
-    println!("      Raft Final State Last Seq:     {}", final_state.last_seq);
+    println!(
+        "      Raft Final State Status:       {:?}",
+        final_state.status
+    );
+    println!(
+        "      Raft Final State Last Seq:     {}",
+        final_state.last_seq
+    );
     println!("      Raft Final State Hash:         {}", final_hash);
     println!("      Progression Events Applied:    {}", final_progress);
     println!("      Duplicate Redeliveries Handled:{}", final_duplicates);
     println!("      Total Events Processed:        {}", final_processed);
-    println!("      Execution Duration:            {:.4} s", elapsed.as_secs_f64());
-    println!("      Concurrent Throughput:         {:.2} events/sec", throughput);
+    println!(
+        "      Execution Duration:            {:.4} s",
+        elapsed.as_secs_f64()
+    );
+    println!(
+        "      Concurrent Throughput:         {:.2} events/sec",
+        throughput
+    );
 
     // Invariant and Determinism Assertions
     assert_eq!(final_progress, total_unique_events as u64);
     assert_eq!(final_state.status, SagaStatus::Completed);
     assert_eq!(final_state.last_seq, total_unique_events as u64);
-    assert_eq!(final_state.total_prompt_tokens, baseline_state.total_prompt_tokens);
-    assert_eq!(final_state.total_completion_tokens, baseline_state.total_completion_tokens);
+    assert_eq!(
+        final_state.total_prompt_tokens,
+        baseline_state.total_prompt_tokens
+    );
+    assert_eq!(
+        final_state.total_completion_tokens,
+        baseline_state.total_completion_tokens
+    );
     assert_eq!(
         final_state, baseline_state,
         "CRITICAL: Final Raft state diverged from sequential baseline!"

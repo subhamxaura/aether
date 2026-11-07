@@ -1,7 +1,8 @@
 # AETHER Production Website Launch Plan & Infrastructure Topology
+
 **Document Class:** Web Launch Architecture & Operational Readiness  
 **Target Launch Date:** Q1 2027  
-**Status:** APPROVED FOR EXECUTION  
+**Status:** APPROVED FOR EXECUTION
 
 ---
 
@@ -30,10 +31,11 @@ A category-defining open-source platform requires a launch web architecture that
 ## 2. Web Properties & User Experiences
 
 ### 2.1 Marketing Landing Page (`aether.io`)
+
 - **Technology Stack**: Next.js 15 (App Router), React 19, Tailwind CSS v4, shadcn/ui primitives, Framer Motion for high-framerate micro-interactions.
 - **Hero Section**:
-  - Direct value proposition: *"The Sovereign Operating System for Autonomous AI Swarms"*.
-  - Subhead: *"Deterministic event-sourced execution, tri-tier memory fabrics, and zero-trust sandboxing. Build multi-agent workflows that never hallucinate state or lose execution traces."*
+  - Direct value proposition: _"The Sovereign Operating System for Autonomous AI Swarms"_.
+  - Subhead: _"Deterministic event-sourced execution, tri-tier memory fabrics, and zero-trust sandboxing. Build multi-agent workflows that never hallucinate state or lose execution traces."_
   - Interactive Terminal Snippet with instant copy button:
     ```bash
     curl -sSL https://install.aether.run | sh && aether init my-swarm
@@ -48,11 +50,12 @@ A category-defining open-source platform requires a launch web architecture that
 ---
 
 ### 2.2 Interactive In-Browser Sandbox (`aether.io/play`)
+
 - **Zero-Login Experience**: No account creation, API key, or credit card required.
 - **WebAssembly Engine**: Compiles the `aether-engine` core into WebAssembly (`wasm32-unknown-unknown`) using `wasm-bindgen`, running execution state machines entirely client-side in the browser.
 - **Pre-loaded Scenarios**:
-  1. *Autonomous PR Review Swarm*: Code analyzer agent + Security auditor agent + Synthesizer agent.
-  2. *SecOps Incident Responder*: Log analyzer agent + Threat classifier + Automated patch generator.
+  1. _Autonomous PR Review Swarm_: Code analyzer agent + Security auditor agent + Synthesizer agent.
+  2. _SecOps Incident Responder_: Log analyzer agent + Threat classifier + Automated patch generator.
 - **Split-Screen Interface**:
   - Left panel: Workflow DAG editor (YAML / JSON).
   - Right panel: Live animated execution graph with token streaming, latency metrics, and time-travel replay scrubber.
@@ -60,6 +63,7 @@ A category-defining open-source platform requires a launch web architecture that
 ---
 
 ### 2.3 Documentation Portal (`docs.aether.io`)
+
 - **Engine**: Powered by **Fumadocs** for full-text search (Pagefind), dark/light mode, and copyable polyglot tabs (Python, TypeScript, Rust, cURL).
 - **Core Sections**:
   1. `Getting Started`: 5-Minute Quickstart, Core Concepts, Monorepo Setup.
@@ -71,6 +75,7 @@ A category-defining open-source platform requires a launch web architecture that
 ---
 
 ### 2.4 Cloud Console & Onboarding (`app.aether.io`)
+
 - **Authentication**: Frictionless onboarding via Clerk / WorkOS (GitHub, Google, SAML SSO).
 - **3-Step Onboarding Wizard**:
   1. Create Organization & Workspace.
@@ -81,17 +86,17 @@ A category-defining open-source platform requires a launch web architecture that
 
 ## 3. Global Hosting & Infrastructure Topology
 
-| Subsystem | Component | Hosting Provider | Spec & Sizing | High Availability & Edge |
-| :--- | :--- | :--- | :--- | :--- |
-| **Frontend** | Marketing (`aether.io`) | Vercel / Cloudflare Pages | Edge Serverless | Global Anycast CDN, Brotli/zstd compression |
-| **Frontend** | Docs (`docs.aether.io`) | Cloudflare Pages | Static Edge Delivery | 100% cache hit ratio, sub-25ms global TTFB |
-| **Frontend** | Console (`app.aether.io`) | Vercel Enterprise | Next.js Node Runtime | Multi-region edge bypass for authenticated traffic |
-| **API Gateway** | REST / SSE / WS Gateway | AWS EKS / Fly.io Edge | Envoy / Traefik Proxy | Multi-region, TLS 1.3 termination, rate limiting |
-| **Control Plane**| Core Kernel (`aetherd`) | AWS EKS (Kubernetes) | 3x Nodes (`c6i.2xlarge`) | Multi-AZ, Karpenter autoscaling, Raft consensus |
-| **Persistence** | PostgreSQL + pgvector | AWS Aurora Serverless v2 | 2 - 16 ACUs | Multi-AZ auto-failover, continuous point-in-time recovery |
-| **Event Fabric**| NATS JetStream WAL | AWS EKS StatefulSet | 3x Replicas (NVMe EBS) | Raft cluster replication factor 3 |
-| **Cache & Lock**| Redis / Dragonfly | Managed Redis / ElastiCache | Cluster Mode Enabled | Sub-millisecond latency, multi-AZ replication |
-| **Artifacts** | Snapshots & Blobs | AWS S3 / Cloudflare R2 | S3 Standard / R2 Zero-Egress| Dual-region cross-bucket replication |
+| Subsystem         | Component                 | Hosting Provider            | Spec & Sizing                | High Availability & Edge                                  |
+| :---------------- | :------------------------ | :-------------------------- | :--------------------------- | :-------------------------------------------------------- |
+| **Frontend**      | Marketing (`aether.io`)   | Vercel / Cloudflare Pages   | Edge Serverless              | Global Anycast CDN, Brotli/zstd compression               |
+| **Frontend**      | Docs (`docs.aether.io`)   | Cloudflare Pages            | Static Edge Delivery         | 100% cache hit ratio, sub-25ms global TTFB                |
+| **Frontend**      | Console (`app.aether.io`) | Vercel Enterprise           | Next.js Node Runtime         | Multi-region edge bypass for authenticated traffic        |
+| **API Gateway**   | REST / SSE / WS Gateway   | AWS EKS / Fly.io Edge       | Envoy / Traefik Proxy        | Multi-region, TLS 1.3 termination, rate limiting          |
+| **Control Plane** | Core Kernel (`aetherd`)   | AWS EKS (Kubernetes)        | 3x Nodes (`c6i.2xlarge`)     | Multi-AZ, Karpenter autoscaling, Raft consensus           |
+| **Persistence**   | PostgreSQL + pgvector     | AWS Aurora Serverless v2    | 2 - 16 ACUs                  | Multi-AZ auto-failover, continuous point-in-time recovery |
+| **Event Fabric**  | NATS JetStream WAL        | AWS EKS StatefulSet         | 3x Replicas (NVMe EBS)       | Raft cluster replication factor 3                         |
+| **Cache & Lock**  | Redis / Dragonfly         | Managed Redis / ElastiCache | Cluster Mode Enabled         | Sub-millisecond latency, multi-AZ replication             |
+| **Artifacts**     | Snapshots & Blobs         | AWS S3 / Cloudflare R2      | S3 Standard / R2 Zero-Egress | Dual-region cross-bucket replication                      |
 
 ---
 

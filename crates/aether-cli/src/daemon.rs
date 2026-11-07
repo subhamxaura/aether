@@ -21,15 +21,20 @@ async fn main() -> Result<()> {
     let rest_addr = format!("0.0.0.0:{}", args.port);
     let grpc_addr = format!("0.0.0.0:{}", args.grpc_port);
 
-    let rest_listener = tokio::net::TcpListener::bind(&rest_addr).await
+    let rest_listener = tokio::net::TcpListener::bind(&rest_addr)
+        .await
         .context(format!("Failed to bind REST listener on {}", rest_addr))?;
     info!("REST & SSE Gateway listening on http://{}", rest_addr);
 
-    let grpc_listener = tokio::net::TcpListener::bind(&grpc_addr).await
+    let grpc_listener = tokio::net::TcpListener::bind(&grpc_addr)
+        .await
         .context(format!("Failed to bind gRPC listener on {}", grpc_addr))?;
     info!("gRPC Worker Service listening on {}", grpc_addr);
 
-    println!("aetherd kernel running on {} and {}. Ready for agent swarm execution.", rest_addr, grpc_addr);
+    println!(
+        "aetherd kernel running on {} and {}. Ready for agent swarm execution.",
+        rest_addr, grpc_addr
+    );
 
     let rest_task = tokio::spawn(async move {
         loop {
@@ -38,7 +43,9 @@ async fn main() -> Result<()> {
                     tokio::spawn(async move {
                         use tokio::io::{AsyncReadExt, AsyncWriteExt};
                         let mut buf = [0u8; 1024];
-                        if let Ok(n) = socket.read(&mut buf).await && n > 0 {
+                        if let Ok(n) = socket.read(&mut buf).await
+                            && n > 0
+                        {
                             let response = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 15\r\n\r\n{\"status\":\"ok\"}";
                             let _ = socket.write_all(response.as_bytes()).await;
                         }

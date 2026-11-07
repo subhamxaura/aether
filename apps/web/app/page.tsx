@@ -2,7 +2,9 @@ import React from "react";
 
 export default function HomePage() {
   return (
-    <main style={{ padding: "4rem 2rem", maxWidth: "1200px", margin: "0 auto" }}>
+    <main
+      style={{ padding: "4rem 2rem", maxWidth: "1200px", margin: "0 auto" }}
+    >
       <header style={{ marginBottom: "4rem", textAlign: "center" }}>
         <div
           style={{
@@ -40,8 +42,9 @@ export default function HomePage() {
             lineHeight: 1.6,
           }}
         >
-          AETHER bridges the agent prototype-to-production chasm. Durable event-sourced
-          execution, tri-tier sovereign memory fabric, and zero-trust Wasm/MicroVM isolation.
+          AETHER bridges the agent prototype-to-production chasm. Durable
+          event-sourced execution, tri-tier sovereign memory fabric, and
+          zero-trust Wasm/MicroVM isolation.
         </p>
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
           <a
@@ -90,10 +93,19 @@ export default function HomePage() {
             border: "1px solid rgba(255, 255, 255, 0.06)",
           }}
         >
-          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>Control Plane Kernel</h3>
-          <p style={{ margin: 0, color: "#94a3b8", fontSize: "0.95rem", lineHeight: 1.5 }}>
-            High-throughput Rust asynchronous runtime with Raft consensus and deterministic
-            state fold algebra: S_t = fold(S_0, [E_1..E_t]).
+          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>
+            Control Plane Kernel
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              color: "#94a3b8",
+              fontSize: "0.95rem",
+              lineHeight: 1.5,
+            }}
+          >
+            High-throughput Rust asynchronous runtime with Raft consensus and
+            deterministic state fold algebra: S_t = fold(S_0, [E_1..E_t]).
           </p>
         </div>
         <div
@@ -104,10 +116,19 @@ export default function HomePage() {
             border: "1px solid rgba(255, 255, 255, 0.06)",
           }}
         >
-          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>Tri-Tier Memory Fabric</h3>
-          <p style={{ margin: 0, color: "#94a3b8", fontSize: "0.95rem", lineHeight: 1.5 }}>
-            L1 sub-millisecond scratchpad in Redis, L2 episodic event stream in NATS JetStream,
-            and L3 semantic vector graph in PostgreSQL pgvector.
+          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>
+            Tri-Tier Memory Fabric
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              color: "#94a3b8",
+              fontSize: "0.95rem",
+              lineHeight: 1.5,
+            }}
+          >
+            L1 sub-millisecond scratchpad in Redis, L2 episodic event stream in
+            NATS JetStream, and L3 semantic vector graph in PostgreSQL pgvector.
           </p>
         </div>
         <div
@@ -118,10 +139,19 @@ export default function HomePage() {
             border: "1px solid rgba(255, 255, 255, 0.06)",
           }}
         >
-          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>Zero-Trust Sandboxes</h3>
-          <p style={{ margin: 0, color: "#94a3b8", fontSize: "0.95rem", lineHeight: 1.5 }}>
-            Microsecond-latency deterministic Wasm compute via Wasmtime paired with Firecracker
-            MicroVMs and eBPF network filtering.
+          <h3 style={{ margin: "0 0 0.5rem 0", color: "#38bdf8" }}>
+            Zero-Trust Sandboxes
+          </h3>
+          <p
+            style={{
+              margin: 0,
+              color: "#94a3b8",
+              fontSize: "0.95rem",
+              lineHeight: 1.5,
+            }}
+          >
+            Microsecond-latency deterministic Wasm compute via Wasmtime paired
+            with Firecracker MicroVMs and eBPF network filtering.
           </p>
         </div>
       </section>

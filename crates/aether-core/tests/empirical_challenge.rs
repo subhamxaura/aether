@@ -78,8 +78,14 @@ fn test_duplicate_redelivery_across_all_statuses() {
     assert_eq!(pending_state.status, SagaStatus::Pending);
     assert_eq!(pending_state.last_seq, 1);
 
-    let dup_pending = pending_state.clone().apply(&e1_pending).expect("dup pending");
-    assert_eq!(dup_pending, pending_state, "Pending status must be idempotent");
+    let dup_pending = pending_state
+        .clone()
+        .apply(&e1_pending)
+        .expect("dup pending");
+    assert_eq!(
+        dup_pending, pending_state,
+        "Pending status must be idempotent"
+    );
 
     // 2. Running status
     let running_state = create_running_saga(saga_id, workflow_id);
@@ -93,7 +99,10 @@ fn test_duplicate_redelivery_across_all_statuses() {
         },
     );
     let dup_running = running_state.clone().apply(&e1).expect("dup running");
-    assert_eq!(dup_running, running_state, "Running status must be idempotent");
+    assert_eq!(
+        dup_running, running_state,
+        "Running status must be idempotent"
+    );
 
     // 3. Suspended status
     let suspended_state = create_suspended_saga(saga_id, workflow_id);
@@ -106,7 +115,10 @@ fn test_duplicate_redelivery_across_all_statuses() {
         },
     );
     let dup_susp_1 = suspended_state.clone().apply(&e1).expect("dup susp e1");
-    let dup_susp_2 = suspended_state.clone().apply(&e2_susp).expect("dup susp e2");
+    let dup_susp_2 = suspended_state
+        .clone()
+        .apply(&e2_susp)
+        .expect("dup susp e2");
     assert_eq!(dup_susp_1, suspended_state);
     assert_eq!(dup_susp_2, suspended_state);
 
@@ -121,7 +133,10 @@ fn test_duplicate_redelivery_across_all_statuses() {
         },
     );
     let dup_comp_1 = completed_state.clone().apply(&e1).expect("dup comp e1");
-    let dup_comp_2 = completed_state.clone().apply(&e2_comp).expect("dup comp e2");
+    let dup_comp_2 = completed_state
+        .clone()
+        .apply(&e2_comp)
+        .expect("dup comp e2");
     assert_eq!(dup_comp_1, completed_state);
     assert_eq!(dup_comp_2, completed_state);
 
@@ -136,7 +151,10 @@ fn test_duplicate_redelivery_across_all_statuses() {
         },
     );
     let dup_abort_1 = aborted_state.clone().apply(&e1).expect("dup abort e1");
-    let dup_abort_2 = aborted_state.clone().apply(&e2_abort).expect("dup abort e2");
+    let dup_abort_2 = aborted_state
+        .clone()
+        .apply(&e2_abort)
+        .expect("dup abort e2");
     assert_eq!(dup_abort_1, aborted_state);
     assert_eq!(dup_abort_2, aborted_state);
 }
@@ -184,7 +202,10 @@ fn test_new_events_rejected_on_terminal_sagas() {
             assert!(from.contains("Completed"));
             assert!(reason.contains("terminated saga"));
         }
-        res => panic!("Expected InvalidTransition on gap event on Completed, got {:?}", res),
+        res => panic!(
+            "Expected InvalidTransition on gap event on Completed, got {:?}",
+            res
+        ),
     }
 
     // Aborted saga
@@ -204,7 +225,10 @@ fn test_new_events_rejected_on_terminal_sagas() {
             assert!(from.contains("Aborted"));
             assert!(reason.contains("terminated saga"));
         }
-        res => panic!("Expected InvalidTransition on gap event on Aborted, got {:?}", res),
+        res => panic!(
+            "Expected InvalidTransition on gap event on Aborted, got {:?}",
+            res
+        ),
     }
 }
 
@@ -369,7 +393,10 @@ fn test_stress_duplicate_injection_in_event_stream() {
     let clean_state = SagaState::fold(initial.clone(), &clean_events).expect("clean fold");
     let noisy_state = SagaState::fold(initial, &noisy_events).expect("noisy fold with duplicates");
 
-    assert_eq!(clean_state, noisy_state, "Stream with duplicate redeliveries must yield identical state");
+    assert_eq!(
+        clean_state, noisy_state,
+        "Stream with duplicate redeliveries must yield identical state"
+    );
     assert_eq!(noisy_state.status, SagaStatus::Completed);
     assert_eq!(noisy_state.last_seq, 101);
     assert_eq!(noisy_state.total_prompt_tokens, 99 * 10);

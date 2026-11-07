@@ -5,12 +5,7 @@ use serde_json::json;
 use std::time::Instant;
 use uuid::Uuid;
 
-fn generate_random_event(
-    rng: &mut StdRng,
-    saga_id: Uuid,
-    seq: u64,
-    _workflow_id: Uuid,
-) -> Event {
+fn generate_random_event(rng: &mut StdRng, saga_id: Uuid, seq: u64, _workflow_id: Uuid) -> Event {
     let payload_type = rng.gen_range(0..11);
     let payload = match payload_type {
         0 => EventPayload::ContextWindowHydrated {
@@ -18,7 +13,11 @@ fn generate_random_event(
             memory_ids: vec![Uuid::new_v4()],
         },
         1 => EventPayload::PromptDispatched {
-            model: if rng.gen_bool(0.5) { "claude-3-7-sonnet".to_string() } else { "gpt-4o".to_string() },
+            model: if rng.gen_bool(0.5) {
+                "claude-3-7-sonnet".to_string()
+            } else {
+                "gpt-4o".to_string()
+            },
             prompt_hash: format!("{:016x}", rng.r#gen::<u64>()),
         },
         2 => EventPayload::InferenceCompleted {
@@ -126,9 +125,11 @@ fn test_state_machine_fuzzing_100k_iterations() {
         if action < 45 {
             // ACTION A: Valid sequential progress (Invariant 1: Monotonicity, Invariant 4: Token Accounting)
             let next_seq = state.last_seq + 1;
-            let event = generate_random_event(&mut rng, current_saga_id, next_seq, current_workflow_id);
+            let event =
+                generate_random_event(&mut rng, current_saga_id, next_seq, current_workflow_id);
 
-            let is_terminal_before = matches!(state.status, SagaStatus::Completed | SagaStatus::Aborted);
+            let is_terminal_before =
+                matches!(state.status, SagaStatus::Completed | SagaStatus::Aborted);
 
             let res = state.clone().apply(&event);
 
@@ -139,7 +140,10 @@ fn test_state_machine_fuzzing_100k_iterations() {
                     Err(AetherError::InvalidTransition { .. }) => {
                         inv2_terminal_immutability_checks += 1;
                     }
-                    Err(other) => panic!("Expected InvalidTransition on terminal saga, got {:?}", other),
+                    Err(other) => panic!(
+                        "Expected InvalidTransition on terminal saga, got {:?}",
+                        other
+                    ),
                     Ok(_) => unreachable!(),
                 }
             } else {
@@ -230,7 +234,11 @@ fn test_state_machine_fuzzing_100k_iterations() {
                 assert!(res.is_err(), "Terminal saga must reject new events");
                 inv2_terminal_immutability_checks += 1;
             } else {
-                assert!(res.is_err(), "Non-monotonic sequence {} must be rejected", bad_seq);
+                assert!(
+                    res.is_err(),
+                    "Non-monotonic sequence {} must be rejected",
+                    bad_seq
+                );
                 match res {
                     Err(AetherError::SequenceMismatch { expected, actual }) => {
                         if is_zero {
@@ -241,7 +249,9 @@ fn test_state_machine_fuzzing_100k_iterations() {
                         }
                         inv1_seq_monotonicity_checks += 1;
                     }
-                    Err(AetherError::InvalidTransition { .. }) if matches!(state.status, SagaStatus::Completed | SagaStatus::Aborted) => {
+                    Err(AetherError::InvalidTransition { .. })
+                        if matches!(state.status, SagaStatus::Completed | SagaStatus::Aborted) =>
+                    {
                         inv2_terminal_immutability_checks += 1;
                     }
                     other => panic!("Unexpected error on sequence violation: {:?}", other),
@@ -291,7 +301,10 @@ fn test_state_machine_fuzzing_100k_iterations() {
                         assert!(reason.contains("terminated saga"));
                         inv2_terminal_immutability_checks += 1;
                     }
-                    other => panic!("Expected InvalidTransition on terminal saga, got {:?}", other),
+                    other => panic!(
+                        "Expected InvalidTransition on terminal saga, got {:?}",
+                        other
+                    ),
                 }
             }
         }
@@ -312,7 +325,10 @@ fn test_state_machine_fuzzing_100k_iterations() {
                     assert!(reason.contains("terminated saga"));
                     inv2_terminal_immutability_checks += 1;
                 }
-                other => panic!("Expected InvalidTransition on terminal saga, got {:?}", other),
+                other => panic!(
+                    "Expected InvalidTransition on terminal saga, got {:?}",
+                    other
+                ),
             }
 
             if terminal_probes >= 3 {
@@ -375,18 +391,42 @@ fn test_state_machine_fuzzing_100k_iterations() {
     let throughput = (target_iterations as f64) / elapsed.as_secs_f64();
 
     println!("  Total Fuzzing Iterations:          {}", target_iterations);
-    println!("  Execution Elapsed Time:            {:.4} s", elapsed.as_secs_f64());
-    println!("  Fuzzing Throughput:                {:.2} iterations/sec", throughput);
+    println!(
+        "  Execution Elapsed Time:            {:.4} s",
+        elapsed.as_secs_f64()
+    );
+    println!(
+        "  Fuzzing Throughput:                {:.2} iterations/sec",
+        throughput
+    );
     println!("  Saga Lifecycles Explored:          {}", sagas_cycled);
-    println!("  Invariant 1 Checks (Monotonicity): {}", inv1_seq_monotonicity_checks);
-    println!("  Invariant 2 Checks (Immutability): {}", inv2_terminal_immutability_checks);
-    println!("  Invariant 3 Checks (Idempotency):  {}", inv3_idempotent_stability_checks);
-    println!("  Invariant 4 Checks (Token Acct):   {}", inv4_token_accounting_checks);
-    println!("  Invariant 5 Checks (Isolation):    {}", inv5_cross_saga_isolation_checks);
-    println!("  Total Invariant Validations:       {}",
-        inv1_seq_monotonicity_checks + inv2_terminal_immutability_checks +
-        inv3_idempotent_stability_checks + inv4_token_accounting_checks +
+    println!(
+        "  Invariant 1 Checks (Monotonicity): {}",
+        inv1_seq_monotonicity_checks
+    );
+    println!(
+        "  Invariant 2 Checks (Immutability): {}",
+        inv2_terminal_immutability_checks
+    );
+    println!(
+        "  Invariant 3 Checks (Idempotency):  {}",
+        inv3_idempotent_stability_checks
+    );
+    println!(
+        "  Invariant 4 Checks (Token Acct):   {}",
+        inv4_token_accounting_checks
+    );
+    println!(
+        "  Invariant 5 Checks (Isolation):    {}",
         inv5_cross_saga_isolation_checks
+    );
+    println!(
+        "  Total Invariant Validations:       {}",
+        inv1_seq_monotonicity_checks
+            + inv2_terminal_immutability_checks
+            + inv3_idempotent_stability_checks
+            + inv4_token_accounting_checks
+            + inv5_cross_saga_isolation_checks
     );
     println!("  Unhandled Panics:                  0 (Zero panics)");
     println!("  Invariant Violations:              0 (100% Invariant Compliance)");

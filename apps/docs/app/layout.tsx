@@ -2,7 +2,8 @@ import React from "react";
 
 export const metadata = {
   title: "AETHER Documentation",
-  description: "Developer guides, API references, and architecture specifications for AETHER OS.",
+  description:
+    "Developer guides, API references, and architecture specifications for AETHER OS.",
 };
 
 export default function RootLayout({

@@ -6,7 +6,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
-[![Rust Edition](https://img.shields.io/badge/Rust-2024%20(1.82%2B)-DEA584.svg)](Cargo.toml)
+[![Rust Edition](<https://img.shields.io/badge/Rust-2024%20(1.82%2B)-DEA584.svg>)](Cargo.toml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6%2B-3178C6.svg)](package.json)
 [![Docker Support](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](docker-compose.yml)
 [![Discord Community](https://img.shields.io/badge/Discord-Join%20Community-5865F2.svg)](https://discord.gg/aether)
@@ -45,12 +45,12 @@ Modern AI agent frameworks (LangGraph, CrewAI, AutoGen) are written as monolithi
 
 ## 🏛️ The Five Core Pillars
 
-| Pillar | Capability | Technical Mechanism |
-| :--- | :--- | :--- |
-| **1. Durable Event-Sourced Execution** | **Zero Lost State** | Append-only event WAL ($S_t = \text{fold}(S_0, [E_1..E_t])$). Automatic suspension and resumption across worker crashes in `<15ms`. |
-| **2. Tri-Tier Sovereign Memory Fabric** | **Lifelong Context** | **L1 Ephemeral Scratchpad** (Redis), **L2 Episodic Event Graph** (NATS/Postgres), **L3 Semantic Knowledge Graph** (`pgvector` HNSW). |
-| **3. Zero-Trust Sandboxing** | **Hardware Isolation** | Sub-millisecond WebAssembly (**Wasmtime**) and Linux MicroVMs (**Firecracker**) with strictly policy-gated eBPF network egress. |
-| **4. Deterministic Time-Travel Replay** | **Instant Debugging** | Capture every token, model parameter, and tool mutation. Scrub backward/forward through past runs to diagnose hallucinations. |
+| Pillar                                   | Capability                 | Technical Mechanism                                                                                                                       |
+| :--------------------------------------- | :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Durable Event-Sourced Execution**   | **Zero Lost State**        | Append-only event WAL ($S_t = \text{fold}(S_0, [E_1..E_t])$). Automatic suspension and resumption across worker crashes in `<15ms`.       |
+| **2. Tri-Tier Sovereign Memory Fabric**  | **Lifelong Context**       | **L1 Ephemeral Scratchpad** (Redis), **L2 Episodic Event Graph** (NATS/Postgres), **L3 Semantic Knowledge Graph** (`pgvector` HNSW).      |
+| **3. Zero-Trust Sandboxing**             | **Hardware Isolation**     | Sub-millisecond WebAssembly (**Wasmtime**) and Linux MicroVMs (**Firecracker**) with strictly policy-gated eBPF network egress.           |
+| **4. Deterministic Time-Travel Replay**  | **Instant Debugging**      | Capture every token, model parameter, and tool mutation. Scrub backward/forward through past runs to diagnose hallucinations.             |
 | **5. Sovereign Cloud-Native Governance** | **100% Privacy & Control** | Self-hosted, air-gapped ready, multi-tenant RBAC/ABAC (Cedar), real-time budget guardrails, and cryptographic action signing (`ed25519`). |
 
 ---
@@ -116,20 +116,20 @@ Aether is organized into four decoupled planes designed for horizontal scalabili
 
 How Aether stacks up against legacy workflow orchestrators, prototyping libraries, and databases:
 
-| Dimension / Factor | AETHER Core | Temporal | LangGraph | AutoGen / CrewAI | Supabase |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **1. Native LLM Durability & Event Sourcing** | **Native ($S_t = \text{fold}$)** | Partial (Activities only) | In-Memory / SQLite hack | None | None |
-| **2. Probabilistic State Machine Engine** | **Yes (Speculative/Rollback)** | No (Deterministic only) | Basic Graph | Rigid Chat Loop | No |
-| **3. Tri-Tier Sovereign Memory Fabric** | **Native (L1/L2/L3)** | None | Ad-hoc Vector RAG | Naive Chat History | pgvector only |
-| **4. Tool Sandboxing (MicroVM / Wasm)** | **Native (Firecracker/Wasm)** | None | None (Host OS) | Docker (Ad-hoc) | Deno Edge (Basic) |
-| **5. Deterministic Time-Travel Replay** | **Full Token/State Replay** | Execution Replay only | Partial Step Replay | None | None |
-| **6. Zero-Trust Policy & Budget Gateway** | **Native (Token/Dollar/PII)** | None | None | None | RLS (Data only) |
-| **7. Polyglot Distributed Architecture** | **Rust Core + Polyglot SDKs** | Polyglot SDKs | Python / TS only | Python only | Polyglot Client |
-| **8. Air-Gapped Sovereign Deployment** | **100% Air-Gapped Ready** | Self-hostable | Self-hostable | Self-hostable | Self-hostable |
-| **9. Cryptographic Action Signing (ed25519)**| **Built-in Non-Repudiation** | None | None | None | None |
-| **10. Multi-Agent Consensus & Swarm Raft** | **Built-in Swarm Protocol** | Custom Activity Logic | Manual routing | Conversational only | None |
-| **11. Dual-Control HITL Approval Gates** | **Dual-Control Webhook/UI** | Signal/Query based | Basic Interrupt | Basic CLI Prompt | None |
-| **12. OpenTelemetry GenAI Semantic Spans** | **Native OpenTelemetry 1.28+** | Generic workflow metrics | Proprietary SaaS | None | Standard Tracing |
+| Dimension / Factor                            |           AETHER Core            |         Temporal          |        LangGraph        |  AutoGen / CrewAI   |     Supabase      |
+| :-------------------------------------------- | :------------------------------: | :-----------------------: | :---------------------: | :-----------------: | :---------------: |
+| **1. Native LLM Durability & Event Sourcing** | **Native ($S_t = \text{fold}$)** | Partial (Activities only) | In-Memory / SQLite hack |        None         |       None        |
+| **2. Probabilistic State Machine Engine**     |  **Yes (Speculative/Rollback)**  |  No (Deterministic only)  |       Basic Graph       |   Rigid Chat Loop   |        No         |
+| **3. Tri-Tier Sovereign Memory Fabric**       |      **Native (L1/L2/L3)**       |           None            |    Ad-hoc Vector RAG    | Naive Chat History  |   pgvector only   |
+| **4. Tool Sandboxing (MicroVM / Wasm)**       |  **Native (Firecracker/Wasm)**   |           None            |     None (Host OS)      |   Docker (Ad-hoc)   | Deno Edge (Basic) |
+| **5. Deterministic Time-Travel Replay**       |   **Full Token/State Replay**    |   Execution Replay only   |   Partial Step Replay   |        None         |       None        |
+| **6. Zero-Trust Policy & Budget Gateway**     |  **Native (Token/Dollar/PII)**   |           None            |          None           |        None         |  RLS (Data only)  |
+| **7. Polyglot Distributed Architecture**      |  **Rust Core + Polyglot SDKs**   |       Polyglot SDKs       |    Python / TS only     |     Python only     |  Polyglot Client  |
+| **8. Air-Gapped Sovereign Deployment**        |    **100% Air-Gapped Ready**     |       Self-hostable       |      Self-hostable      |    Self-hostable    |   Self-hostable   |
+| **9. Cryptographic Action Signing (ed25519)** |   **Built-in Non-Repudiation**   |           None            |          None           |        None         |       None        |
+| **10. Multi-Agent Consensus & Swarm Raft**    |   **Built-in Swarm Protocol**    |   Custom Activity Logic   |     Manual routing      | Conversational only |       None        |
+| **11. Dual-Control HITL Approval Gates**      |   **Dual-Control Webhook/UI**    |    Signal/Query based     |     Basic Interrupt     |  Basic CLI Prompt   |       None        |
+| **12. OpenTelemetry GenAI Semantic Spans**    |  **Native OpenTelemetry 1.28+**  | Generic workflow metrics  |    Proprietary SaaS     |        None         | Standard Tracing  |
 
 ---
 
@@ -138,6 +138,7 @@ How Aether stacks up against legacy workflow orchestrators, prototyping librarie
 Get an entire multi-agent swarm running locally with deterministic state persistence in under 5 minutes:
 
 ### 1. Clone & Bootstrap
+
 ```bash
 # Clone the repository
 git clone https://github.com/aether-ai/aether.git
@@ -151,6 +152,7 @@ docker compose up -d
 ```
 
 ### 2. Python SDK Example (`packages/sdk-python`)
+
 ```python
 import asyncio
 from aether import Agent, Workflow, Tool, Supervisor
@@ -186,6 +188,7 @@ if __name__ == "__main__":
 ```
 
 ### 3. TypeScript SDK Example (`packages/sdk-typescript`)
+
 ```typescript
 import { AetherClient, defineAgent, defineWorkflow } from "@aether/sdk";
 import { z } from "zod";
@@ -200,13 +203,15 @@ const researcher = defineAgent({
   inputSchema: z.object({ topic: z.string() }),
 });
 
-const workflow = defineWorkflow({ name: "market-research" })
-  .step("gather_intelligence", researcher);
+const workflow = defineWorkflow({ name: "market-research" }).step(
+  "gather_intelligence",
+  researcher,
+);
 
 // Trigger durable run
 const run = await client.triggerWorkflow(workflow, {
   inputs: { topic: "Distributed Consensus Protocols" },
-  idempotencyKey: "research-run-202"
+  idempotencyKey: "research-run-202",
 });
 
 // Stream real-time tokens over HTTP/2 SSE

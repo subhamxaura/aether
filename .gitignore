@@ -5,6 +5,8 @@ target/
 .next/
 out/
 *.wasm
+*.tsbuildinfo
+
 
 # Dependencies
 node_modules/

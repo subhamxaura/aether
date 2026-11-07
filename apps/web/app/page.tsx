@@ -3,7 +3,13 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0f172a", color: "#f8fafc" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#0f172a",
+        color: "#f8fafc",
+      }}
+    >
       {/* Top Navigation Bar */}
       <nav
         style={{
@@ -33,7 +39,14 @@ export default function HomePage() {
           ⚡ AETHER
         </Link>
 
-        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", fontSize: "0.9rem" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "1.5rem",
+            alignItems: "center",
+            fontSize: "0.9rem",
+          }}
+        >
           <Link
             href="/play"
             style={{
@@ -50,7 +63,11 @@ export default function HomePage() {
           </Link>
           <a
             href="http://localhost:3001"
-            style={{ color: "#94a3b8", textDecoration: "none", fontWeight: 500 }}
+            style={{
+              color: "#94a3b8",
+              textDecoration: "none",
+              fontWeight: 500,
+            }}
           >
             Explore Documentation
           </a>
@@ -58,7 +75,11 @@ export default function HomePage() {
             href="https://github.com/subhamxaura/aether"
             target="_blank"
             rel="noreferrer"
-            style={{ color: "#94a3b8", textDecoration: "none", fontWeight: 500 }}
+            style={{
+              color: "#94a3b8",
+              textDecoration: "none",
+              fontWeight: 500,
+            }}
           >
             View on GitHub
           </a>
@@ -200,7 +221,15 @@ export default function HomePage() {
               High-throughput Rust asynchronous runtime with Raft consensus and
               deterministic state fold algebra: S_t = fold(S_0, [E_1..E_t]).
             </p>
-            <Link href="/play" style={{ color: "#38bdf8", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+            <Link
+              href="/play"
+              style={{
+                color: "#38bdf8",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
               Inspect Kernel in Console →
             </Link>
           </div>
@@ -224,10 +253,19 @@ export default function HomePage() {
                 lineHeight: 1.5,
               }}
             >
-              L1 sub-millisecond scratchpad in Redis, L2 episodic event stream in
-              NATS JetStream, and L3 semantic vector graph in PostgreSQL pgvector.
+              L1 sub-millisecond scratchpad in Redis, L2 episodic event stream
+              in NATS JetStream, and L3 semantic vector graph in PostgreSQL
+              pgvector.
             </p>
-            <Link href="/play" style={{ color: "#38bdf8", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+            <Link
+              href="/play"
+              style={{
+                color: "#38bdf8",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
               Inspect Memory in Console →
             </Link>
           </div>
@@ -254,7 +292,15 @@ export default function HomePage() {
               Microsecond-latency deterministic Wasm compute via Wasmtime paired
               with Firecracker MicroVMs and eBPF network filtering.
             </p>
-            <Link href="/play" style={{ color: "#38bdf8", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+            <Link
+              href="/play"
+              style={{
+                color: "#38bdf8",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
               Run Sandbox in Console →
             </Link>
           </div>

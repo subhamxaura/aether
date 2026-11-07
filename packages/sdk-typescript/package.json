@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "node --test test/**/*.test.mjs",
+    "test": "node --test test/client.test.mjs test/workflow.test.mjs",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },

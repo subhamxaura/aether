@@ -1,0 +1,29 @@
+[package]
+name = "aether-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "aether-cli"
+path = "src/main.rs"
+
+[[bin]]
+name = "aetherd"
+path = "src/daemon.rs"
+
+[dependencies]
+aether-core = { path = "../aether-core" }
+aether-raft = { path = "../aether-raft" }
+aether-wasm = { path = "../aether-wasm" }
+clap = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+anyhow = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+

@@ -1,0 +1,77 @@
+[workspace]
+members = [
+    "crates/aether-core",
+    "crates/aether-raft",
+    "crates/aether-wasm",
+    "crates/aether-cli",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Aether Platform Team <maintainers@aether.run>"]
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/aether-ai/aether"
+homepage = "https://aether.io"
+documentation = "https://docs.aether.io"
+readme = "README.md"
+keywords = ["ai-agents", "orchestration", "wasm", "distributed-systems", "raft"]
+categories = ["asynchronous", "concurrency", "development-tools"]
+
+[workspace.dependencies]
+# Async Runtime & Concurrency
+tokio = { version = "1.41", features = ["full"] }
+tokio-stream = "0.1"
+futures = "0.3"
+async-trait = "0.1"
+
+# Serialization & Deserialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+prost = "0.13"
+prost-types = "0.13"
+
+# Networking & Web APIs
+tonic = { version = "0.12", features = ["transport", "tls"] }
+axum = { version = "0.7", features = ["ws", "macros"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-full"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+
+# Distributed State & Consensus
+openraft = { version = "0.9", features = ["serde"] }
+
+# WebAssembly Sandboxing
+wasmtime = "26.0"
+wasmtime-wasi = "26.0"
+
+# Observability & Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+opentelemetry = { version = "0.26", features = ["trace"] }
+opentelemetry-otlp = "0.26"
+
+# Cryptography & Identifiers
+uuid = { version = "1.11", features = ["v4", "v7", "serde"] }
+sha2 = "0.10"
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+rand = "0.8"
+
+# Utilities & Error Handling
+thiserror = "2.0"
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true

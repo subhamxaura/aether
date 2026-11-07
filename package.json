@@ -1,0 +1,44 @@
+{
+  "name": "aether-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Distributed Sovereign Agent Operating System & Deterministic Execution Fabric",
+  "license": "Apache-2.0",
+  "author": "Aether Platform Team <maintainers@aether.run>",
+  "homepage": "https://aether.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aether-ai/aether.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aether-ai/aether/issues"
+  },
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json,yaml,yml}\"",
+    "clean": "turbo run clean && rimraf node_modules",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "cargo:build": "cargo build --workspace",
+    "cargo:test": "cargo test --workspace",
+    "cargo:clippy": "cargo clippy --workspace --all-targets -- -D warnings"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "turbo": "^2.2.3",
+    "typescript": "^5.6.3"
+  }
+}

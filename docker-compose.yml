@@ -1,0 +1,154 @@
+services:
+  # ============================================================================
+  # 1. PostgreSQL 16 with pgvector & TimescaleDB support
+  # ============================================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: aether-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aether_dev
+      POSTGRES_USER: aether_app
+      POSTGRES_PASSWORD: aether_dev_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/DATA_MODELS.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aether_app -d aether_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aether-network
+
+  # ============================================================================
+  # 2. NATS JetStream (Distributed Write-Ahead Log & Event Bus)
+  # ============================================================================
+  nats:
+    image: nats:2.10-alpine
+    container_name: aether-nats
+    restart: unless-stopped
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "4222:4222" # Client port
+      - "8222:8222" # HTTP monitoring dashboard
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8222/varz"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aether-network
+
+  # ============================================================================
+  # 3. Redis / Dragonfly (In-Memory L1 Cache, Rate Limits & Ephemeral Locks)
+  # ============================================================================
+  redis:
+    image: redis:7.4-alpine
+    container_name: aether-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "aether_dev_redis"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "aether_dev_redis", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aether-network
+
+  # ============================================================================
+  # 4. MinIO S3-Compatible Object Store (Snapshots, Blobs & Checkpoints)
+  # ============================================================================
+  minio:
+    image: minio/minio:RELEASE.2024-10-02T17-50-41Z
+    container_name: aether-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: aether_minio_admin
+      MINIO_ROOT_PASSWORD: aether_minio_password
+    ports:
+      - "9000:9000" # S3 API endpoint
+      - "9001:9001" # Web Console UI
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aether-network
+
+  # ============================================================================
+  # 5. Aether Control Plane Engine (Rust Kernel - aetherd)
+  # ============================================================================
+  aether-engine:
+    image: rust:1.82-bookworm
+    container_name: aether-engine
+    restart: unless-stopped
+    working_dir: /workspace
+    environment:
+      APP_ENV: development
+      LOG_LEVEL: debug
+      DATABASE_URL: postgresql://aether_app:aether_dev_password@postgres:5432/aether_dev
+      NATS_URL: nats://nats:4222
+      REDIS_URL: redis://:aether_dev_redis@redis:6379/0
+      # Storage Matrix Alignment (.env.example Tier 10)
+      STORAGE_PROVIDER: s3
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_BUCKET_NAME: aether-checkpoints
+      STORAGE_REGION: us-east-1
+      STORAGE_ACCESS_KEY_ID: aether_minio_admin
+      STORAGE_SECRET_ACCESS_KEY: aether_minio_password
+      STORAGE_FORCE_PATH_STYLE: "true"
+      # Legacy S3 Aliases for backwards compatibility
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: aether-checkpoints
+      S3_ACCESS_KEY: aether_minio_admin
+      S3_SECRET_KEY: aether_minio_password
+      # Security Credentials (.env.example Tier 2)
+      JWT_SIGNING_SECRET: fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
+      ENCRYPTION_SECRET_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    volumes:
+      - .:/workspace
+      - cargo_target:/workspace/target
+      - cargo_cache:/usr/local/cargo/registry
+    ports:
+      - "8080:8080" # REST & SSE API Gateway
+      - "9090:9090" # gRPC Worker Coordination
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    command: >
+      bash -c "cargo build --workspace && cargo run --bin aether-cli -- daemon --port 8080 --grpc-port 9090"
+    networks:
+      - aether-network
+
+networks:
+  aether-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  nats_data:
+  redis_data:
+  minio_data:
+  cargo_target:
+  cargo_cache:
+

@@ -1,0 +1,47 @@
+name: Feature Request / RFC Proposal
+description: Propose an enhancement, new capability, or architectural RFC for Aether
+title: "[RFC]: "
+labels: ["enhancement", "rfc"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We welcome proposals to make Aether more resilient, ergonomic, and performant.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What limitation or pain point does this proposal address?
+      placeholder: "When running multi-agent swarms with > 50 workers, ..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution & Technical Design
+      description: Describe your proposed design, API contracts, or architectural changes.
+      placeholder: "Introduce an adaptive token-bucket rate limiter that ..."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches or workarounds did you consider?
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Breaking Change Impact
+      description: Does this introduce breaking changes to public APIs or storage formats?
+      options:
+        - "No (Backward-compatible additive change)"
+        - "Yes (Requires migration or version bump)"
+        - "Undetermined"
+    validations:
+      required: true
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: Implementation
+      options:
+        - label: I am willing to submit a pull request implementing this RFC.

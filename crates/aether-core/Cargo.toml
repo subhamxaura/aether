@@ -1,0 +1,31 @@
+[package]
+name = "aether-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+rand = { workspace = true }
+
+[[bin]]
+name = "bench_fold_replay"
+path = "src/bin/bench_fold_replay.rs"
+
+[[bench]]
+name = "fold_replay_bench"
+harness = false
+path = "benches/fold_replay_bench.rs"
+
+

@@ -57,12 +57,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               fontSize: "0.875rem",
               lineHeight: 1.6,
               color: "#e2e8f0",
-              fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+              fontFamily:
+                "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
             }}
           >
             <code>{codeLines.join("\n")}</code>
           </pre>
-        </div>
+        </div>,
       );
       continue;
     }
@@ -77,7 +78,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             borderTop: "1px solid rgba(255, 255, 255, 0.1)",
             margin: "2rem 0",
           }}
-        />
+        />,
       );
       i++;
       continue;
@@ -86,7 +87,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // Markdown Table
     if (line.includes("|") && line.trim().startsWith("|")) {
       const tableLines: string[] = [];
-      while (i < lines.length && lines[i].includes("|") && lines[i].trim().startsWith("|")) {
+      while (
+        i < lines.length &&
+        lines[i].includes("|") &&
+        lines[i].trim().startsWith("|")
+      ) {
         tableLines.push(lines[i]);
         i++;
       }
@@ -133,13 +138,19 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               </thead>
               <tbody>
                 {rowLines.map((row, rIdx) => {
-                  const cols = row.split("|").slice(1, -1).map((c) => c.trim());
+                  const cols = row
+                    .split("|")
+                    .slice(1, -1)
+                    .map((c) => c.trim());
                   return (
                     <tr
                       key={rIdx}
                       style={{
                         borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-                        background: rIdx % 2 === 1 ? "rgba(255, 255, 255, 0.015)" : "transparent",
+                        background:
+                          rIdx % 2 === 1
+                            ? "rgba(255, 255, 255, 0.015)"
+                            : "transparent",
                       }}
                     >
                       {cols.map((col, cIdx) => (
@@ -158,7 +169,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
                 })}
               </tbody>
             </table>
-          </div>
+          </div>,
         );
       }
       continue;
@@ -189,7 +200,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               {formatInline(ql)}
             </p>
           ))}
-        </blockquote>
+        </blockquote>,
       );
       continue;
     }
@@ -208,7 +219,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           }}
         >
           {formatInline(line.slice(2))}
-        </h1>
+        </h1>,
       );
       i++;
       continue;
@@ -227,7 +238,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           }}
         >
           {formatInline(line.slice(3))}
-        </h2>
+        </h2>,
       );
       i++;
       continue;
@@ -244,7 +255,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           }}
         >
           {formatInline(line.slice(4))}
-        </h3>
+        </h3>,
       );
       i++;
       continue;
@@ -261,7 +272,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           }}
         >
           {formatInline(line.slice(5))}
-        </h4>
+        </h4>,
       );
       i++;
       continue;
@@ -291,7 +302,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               {formatInline(item)}
             </li>
           ))}
-        </ListTag>
+        </ListTag>,
       );
       continue;
     }
@@ -314,7 +325,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         }}
       >
         {formatInline(line)}
-      </p>
+      </p>,
     );
     i++;
   }
@@ -368,7 +379,7 @@ function formatInline(text: string): React.ReactNode {
           }}
         >
           {codeMatch[2]}
-        </code>
+        </code>,
       );
       remaining = codeMatch[3];
     } else if (earliestType === "bold" && boldMatch) {
@@ -376,7 +387,7 @@ function formatInline(text: string): React.ReactNode {
       tokens.push(
         <strong key={key++} style={{ color: "#f8fafc", fontWeight: 700 }}>
           {boldMatch[2]}
-        </strong>
+        </strong>,
       );
       remaining = boldMatch[3];
     } else if (earliestType === "link" && linkMatch) {
@@ -392,7 +403,7 @@ function formatInline(text: string): React.ReactNode {
           }}
         >
           {linkMatch[2]}
-        </a>
+        </a>,
       );
       remaining = linkMatch[4];
     } else {

@@ -27,19 +27,22 @@ const DOCS_CATALOG = [
   {
     slug: "launch-plan",
     title: "Production Launch Plan & Topology",
-    description: "Cloud hosting topology, environment configs, and 25-point launch checklist",
+    description:
+      "Cloud hosting topology, environment configs, and 25-point launch checklist",
     file: "launch-plan.md",
   },
   {
     slug: "roadmap",
     title: "Phased Execution Roadmap (M1–M4)",
-    description: "MVP foundation, collaborative ecosystem, and enterprise scale milestones",
+    description:
+      "MVP foundation, collaborative ecosystem, and enterprise scale milestones",
     file: "roadmap.md",
   },
   {
     slug: "audit-report",
     title: "Final Hardening & Benchmark Audit Report",
-    description: "Full test logs, 1M fold replay benchmarks, and forensic verification",
+    description:
+      "Full test logs, 1M fold replay benchmarks, and forensic verification",
     file: "audit-report.md",
   },
 ];
@@ -50,7 +53,9 @@ export async function generateStaticParams() {
   }));
 }
 
-function getDocContent(slug: string): { title: string; content: string } | null {
+function getDocContent(
+  slug: string,
+): { title: string; content: string } | null {
   const docMeta = DOCS_CATALOG.find((d) => d.slug === slug);
   if (!docMeta) return null;
 
@@ -83,7 +88,8 @@ export default async function DocPage(props: {
 
   const currentIdx = DOCS_CATALOG.findIndex((d) => d.slug === params.slug);
   const prevDoc = currentIdx > 0 ? DOCS_CATALOG[currentIdx - 1] : null;
-  const nextDoc = currentIdx < DOCS_CATALOG.length - 1 ? DOCS_CATALOG[currentIdx + 1] : null;
+  const nextDoc =
+    currentIdx < DOCS_CATALOG.length - 1 ? DOCS_CATALOG[currentIdx + 1] : null;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
@@ -116,11 +122,22 @@ export default async function DocPage(props: {
           ← AETHER Docs
         </Link>
 
-        <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "#64748b", fontWeight: 700, letterSpacing: "0.08em", marginBottom: "0.75rem" }}>
+        <div
+          style={{
+            fontSize: "0.75rem",
+            textTransform: "uppercase",
+            color: "#64748b",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            marginBottom: "0.75rem",
+          }}
+        >
           Documentation Library
         </div>
 
-        <nav style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+        <nav
+          style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
+        >
           {DOCS_CATALOG.map((item) => {
             const isActive = item.slug === params.slug;
             return (
@@ -132,10 +149,14 @@ export default async function DocPage(props: {
                   borderRadius: "0.375rem",
                   fontSize: "0.875rem",
                   color: isActive ? "#38bdf8" : "#94a3b8",
-                  background: isActive ? "rgba(56, 189, 248, 0.1)" : "transparent",
+                  background: isActive
+                    ? "rgba(56, 189, 248, 0.1)"
+                    : "transparent",
                   fontWeight: isActive ? 600 : 400,
                   textDecoration: "none",
-                  borderLeft: isActive ? "2px solid #38bdf8" : "2px solid transparent",
+                  borderLeft: isActive
+                    ? "2px solid #38bdf8"
+                    : "2px solid transparent",
                 }}
               >
                 {item.title}
@@ -144,7 +165,13 @@ export default async function DocPage(props: {
           })}
         </nav>
 
-        <div style={{ marginTop: "2.5rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+        <div
+          style={{
+            marginTop: "2.5rem",
+            paddingTop: "1.5rem",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          }}
+        >
           <a
             href="http://localhost:3000"
             style={{
@@ -176,7 +203,13 @@ export default async function DocPage(props: {
       {/* Main Content Area */}
       <main style={{ flex: 1, padding: "2.5rem 3.5rem", maxWidth: "900px" }}>
         {/* Breadcrumb */}
-        <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "1.5rem" }}>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            color: "#64748b",
+            marginBottom: "1.5rem",
+          }}
+        >
           <Link href="/" style={{ color: "#64748b", textDecoration: "none" }}>
             Docs
           </Link>
@@ -211,7 +244,8 @@ export default async function DocPage(props: {
                 background: "rgba(255, 255, 255, 0.02)",
               }}
             >
-              ← Previous: <strong style={{ color: "#38bdf8" }}>{prevDoc.title}</strong>
+              ← Previous:{" "}
+              <strong style={{ color: "#38bdf8" }}>{prevDoc.title}</strong>
             </Link>
           ) : (
             <div />
@@ -230,7 +264,8 @@ export default async function DocPage(props: {
                 background: "rgba(255, 255, 255, 0.02)",
               }}
             >
-              Next: <strong style={{ color: "#38bdf8" }}>{nextDoc.title}</strong> →
+              Next:{" "}
+              <strong style={{ color: "#38bdf8" }}>{nextDoc.title}</strong> →
             </Link>
           ) : (
             <div />

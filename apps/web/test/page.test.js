@@ -44,7 +44,7 @@ test("Web app page: page.tsx exists, is non-empty, and renders hero, pillars, an
   // Verify CTAs
   assert.match(content, /Explore Documentation/, "page.tsx must have link to Explore Documentation");
   assert.match(content, /View on GitHub/, "page.tsx must have link to View on GitHub");
-  assert.match(content, /https:\/\/github\.com\/aether-ai\/aether/, "page.tsx must link to official GitHub repository");
+  assert.match(content, /https:\/\/github\.com\/(?:aether-ai|subhamxaura)\/aether/, "page.tsx must link to official GitHub repository");
 
   // Verify 3 core architectural pillars
   assert.match(content, /Control Plane Kernel/, "page.tsx must highlight Control Plane Kernel pillar");
